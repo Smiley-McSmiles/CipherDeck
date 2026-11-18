@@ -218,6 +218,18 @@ flowbox.stat-flow > flowboxchild {
   margin-top: 1px;
 }
 
+.markdown-blockquote {
+  border-left: 3px solid alpha(@accent_color, 0.75);
+  background-color: alpha(@window_fg_color, 0.035);
+  border-radius: 0 6px 6px 0;
+  padding: 6px 12px;
+  margin: 2px 0;
+}
+
+.markdown-blockquote > label {
+  color: alpha(@window_fg_color, 0.88);
+}
+
 .filter-bar {
   padding: 8px 12px 10px 12px;
   background-color: @headerbar_bg_color;

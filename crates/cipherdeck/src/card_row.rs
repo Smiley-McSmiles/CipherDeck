@@ -234,10 +234,10 @@ fn render_markdown_into_box(
     opts.insert(Options::ENABLE_TABLES);
 
     let parser = Parser::new_ext(md, opts);
+    let mut box_stack: Vec<gtk::Box> = vec![preview_box.clone()];
     let mut out = String::new();
     let mut inline_codes: Vec<String> = Vec::new();
     let mut list_stack: Vec<Option<u64>> = Vec::new();
-    let mut in_blockquote = false;
     let mut in_table_row = false;
     let mut table_first_cell = true;
     let mut need_list_prefix = false;
@@ -250,19 +250,20 @@ fn render_markdown_into_box(
     let mut pending_task: Option<(usize, bool, usize)> = None;
     let mut task_idx: usize = 0;
 
-    let flush_pango = |out: &mut String, inline_codes: &mut Vec<String>| {
+    let flush_pango = |target: &gtk::Box, out: &mut String, inline_codes: &mut Vec<String>| {
         let trimmed = out.trim();
         if !trimmed.is_empty() {
             let codes = std::mem::take(inline_codes);
             let lbl = make_markdown_label(trimmed, codes, cb);
-            preview_box.append(&lbl);
+            target.append(&lbl);
         } else {
             inline_codes.clear();
         }
         out.clear();
     };
 
-    let flush_pending_task = |pending_task: &mut Option<(usize, bool, usize)>,
+    let flush_pending_task = |target: &gtk::Box,
+                              pending_task: &mut Option<(usize, bool, usize)>,
                               out: &mut String,
                               inline_codes: &mut Vec<String>| {
         if let Some((idx, checked, indent_depth)) = pending_task.take() {
@@ -288,12 +289,13 @@ fn render_markdown_into_box(
             lbl.set_hexpand(true);
             row.append(&lbl);
 
-            preview_box.append(&row);
+            target.append(&row);
             out.clear();
         }
     };
 
     for event in parser {
+        let cur_box = box_stack.last().unwrap_or(preview_box);
         match event {
             Event::Start(tag) => match tag {
                 Tag::Heading { level, .. } => {
@@ -314,15 +316,16 @@ fn render_markdown_into_box(
                     }
                 }
                 Tag::BlockQuote(_) => {
-                    in_blockquote = true;
-                    if !out.is_empty() && !out.ends_with('\n') {
-                        out.push('\n');
-                    }
-                    out.push_str("<i>│ ");
+                    flush_pending_task(cur_box, &mut pending_task, &mut out, &mut inline_codes);
+                    flush_pango(cur_box, &mut out, &mut inline_codes);
+                    let quote_box = gtk::Box::new(gtk::Orientation::Vertical, 4);
+                    quote_box.add_css_class("markdown-blockquote");
+                    cur_box.append(&quote_box);
+                    box_stack.push(quote_box);
                 }
                 Tag::CodeBlock(kind) => {
-                    flush_pending_task(&mut pending_task, &mut out, &mut inline_codes);
-                    flush_pango(&mut out, &mut inline_codes);
+                    flush_pending_task(cur_box, &mut pending_task, &mut out, &mut inline_codes);
+                    flush_pango(cur_box, &mut out, &mut inline_codes);
                     in_code_block = true;
                     code_lang = match kind {
                         CodeBlockKind::Fenced(lang) => lang.to_string(),
@@ -332,7 +335,7 @@ fn render_markdown_into_box(
                 }
                 Tag::List(start_num) => {
                     if pending_task.is_some() {
-                        flush_pending_task(&mut pending_task, &mut out, &mut inline_codes);
+                        flush_pending_task(cur_box, &mut pending_task, &mut out, &mut inline_codes);
                     } else if !out.is_empty() && !out.ends_with('\n') {
                         out.push('\n');
                     }
@@ -391,12 +394,15 @@ fn render_markdown_into_box(
                     }
                 }
                 TagEnd::BlockQuote(_) => {
-                    in_blockquote = false;
-                    out.push_str("</i>\n");
+                    flush_pending_task(cur_box, &mut pending_task, &mut out, &mut inline_codes);
+                    flush_pango(cur_box, &mut out, &mut inline_codes);
+                    if box_stack.len() > 1 {
+                        box_stack.pop();
+                    }
                 }
                 TagEnd::CodeBlock => {
                     let block = build_code_block_widget(&code_lang, &code_buf, cb);
-                    preview_box.append(&block);
+                    cur_box.append(&block);
                     in_code_block = false;
                     code_lang.clear();
                     code_buf.clear();
@@ -411,7 +417,7 @@ fn render_markdown_into_box(
                     need_list_prefix = false;
                     item_prefix_start = None;
                     if pending_task.is_some() {
-                        flush_pending_task(&mut pending_task, &mut out, &mut inline_codes);
+                        flush_pending_task(cur_box, &mut pending_task, &mut out, &mut inline_codes);
                     } else if !out.ends_with('\n') {
                         out.push('\n');
                     }
@@ -437,12 +443,7 @@ fn render_markdown_into_box(
                 if in_code_block {
                     code_buf.push_str(&text);
                 } else {
-                    let escaped = glib::markup_escape_text(&text);
-                    if in_blockquote {
-                        out.push_str(&escaped.replace('\n', "\n│ "));
-                    } else {
-                        out.push_str(&escaped);
-                    }
+                    out.push_str(&glib::markup_escape_text(&text));
                 }
             }
             Event::Code(code) => {
@@ -455,8 +456,6 @@ fn render_markdown_into_box(
             Event::SoftBreak => {
                 if in_code_block {
                     code_buf.push('\n');
-                } else if in_blockquote {
-                    out.push_str("\n│ ");
                 } else {
                     out.push('\n');
                 }
@@ -464,8 +463,6 @@ fn render_markdown_into_box(
             Event::HardBreak => {
                 if in_code_block {
                     code_buf.push('\n');
-                } else if in_blockquote {
-                    out.push_str("\n│ ");
                 } else {
                     out.push('\n');
                 }
@@ -480,7 +477,7 @@ fn render_markdown_into_box(
                 if let Some(pos) = item_prefix_start.take() {
                     out.truncate(pos);
                 }
-                flush_pango(&mut out, &mut inline_codes);
+                flush_pango(cur_box, &mut out, &mut inline_codes);
                 let indent_depth = list_stack.len().saturating_sub(1);
                 pending_task = Some((task_idx, checked, indent_depth));
                 task_idx += 1;
@@ -489,8 +486,9 @@ fn render_markdown_into_box(
         }
     }
 
-    flush_pending_task(&mut pending_task, &mut out, &mut inline_codes);
-    flush_pango(&mut out, &mut inline_codes);
+    let final_box = box_stack.last().unwrap_or(preview_box);
+    flush_pending_task(final_box, &mut pending_task, &mut out, &mut inline_codes);
+    flush_pango(final_box, &mut out, &mut inline_codes);
 }
 
 fn extract_card_links(md: &str) -> Vec<String> {

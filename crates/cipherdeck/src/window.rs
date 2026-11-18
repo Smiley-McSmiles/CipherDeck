@@ -240,7 +240,7 @@ pub fn build_main_window(app: &adw::Application) -> adw::ApplicationWindow {
     hb.pack_start(&add_btn);
 
     let filter_toggle = gtk::ToggleButton::builder()
-        .icon_name("funnel-symbolic")
+        .icon_name("view-sort-descending-symbolic")
         .tooltip_text("Toggle Filters")
         .build();
     hb.pack_start(&filter_toggle);

@@ -1,0 +1,297 @@
+/* CipherDeck (.cdeck) — cascade-gtk inspired floating card & roll-down styling */
+
+list.vault-list {
+  background: none;
+  margin: 12px 12px 18px 12px;
+}
+
+list.vault-list > row.vault-card {
+  background-color: @card_bg_color;
+  color: @card_fg_color;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 6, 0.04),
+    0 1px 3px 1px rgba(0, 0, 6, 0.07),
+    0 2px 6px 2px rgba(0, 0, 6, 0.03);
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+list.vault-list > row.vault-card:focus-visible {
+  outline: 2px solid alpha(@accent_color, 0.5);
+  outline-offset: -2px;
+}
+
+button.card-header {
+  padding: 12px 10px 12px 14px;
+  border-radius: 12px;
+  min-height: 0;
+}
+
+row.vault-card.expanded button.card-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.state-icon {
+  border-radius: 999px;
+  padding: 9px;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: alpha(@accent_bg_color, 0.14);
+  color: @accent_color;
+  transition: background-color 150ms ease, transform 120ms ease;
+}
+
+button.state-icon-btn {
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 999px;
+}
+
+button.state-icon-btn:hover .state-icon {
+  transform: scale(1.08);
+}
+
+row.kind-note .state-icon {
+  background-color: alpha(@success_color, 0.15);
+  color: @success_color;
+}
+
+row.strength-weak .state-icon {
+  background-color: alpha(@warning_color, 0.18);
+  color: @warning_color;
+}
+
+row.is-trashed .state-icon {
+  background-color: alpha(@error_color, 0.15);
+  color: @error_color;
+}
+
+row.vault-card .state-icon.icon-color-blue {
+  background-color: alpha(#3584e4, 0.18);
+  color: #62a0ea;
+}
+
+row.vault-card .state-icon.icon-color-teal {
+  background-color: alpha(#2190a4, 0.20);
+  color: #4fd2e6;
+}
+
+row.vault-card .state-icon.icon-color-green {
+  background-color: alpha(#2ec27e, 0.18);
+  color: #57e389;
+}
+
+row.vault-card .state-icon.icon-color-amber {
+  background-color: alpha(#e5a50a, 0.20);
+  color: #f8e45c;
+}
+
+row.vault-card .state-icon.icon-color-orange {
+  background-color: alpha(#e66100, 0.20);
+  color: #ffa348;
+}
+
+row.vault-card .state-icon.icon-color-red {
+  background-color: alpha(#e01b24, 0.20);
+  color: #f66151;
+}
+
+row.vault-card .state-icon.icon-color-purple {
+  background-color: alpha(#9141ac, 0.22);
+  color: #dc8add;
+}
+
+row.vault-card .state-icon.icon-color-pink {
+  background-color: alpha(#d13384, 0.20);
+  color: #ff7ab8;
+}
+
+.expand-arrow {
+  transition: -gtk-icon-transform 200ms ease;
+  color: alpha(@window_fg_color, 0.55);
+}
+
+row.expanded .expand-arrow {
+  -gtk-icon-transform: rotate(-180deg);
+}
+
+.label-chip {
+  font-size: 0.78em;
+  font-weight: bold;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background-color: alpha(@accent_bg_color, 0.14);
+  color: @accent_color;
+}
+
+.folder-chip {
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background-color: alpha(@window_fg_color, 0.08);
+  color: alpha(@window_fg_color, 0.78);
+}
+
+.card-details {
+  padding: 8px 14px 16px 14px;
+  border-top: 1px solid alpha(@borders, 0.6);
+}
+
+.details-actions button {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+flowbox.stat-flow > flowboxchild {
+  padding: 0;
+}
+
+.stat-tile {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: alpha(@window_fg_color, 0.04);
+}
+
+.stat-value {
+  font-weight: bold;
+}
+
+.card-details list.boxed-list {
+  background-color: alpha(@window_fg_color, 0.02);
+}
+
+.gen-preview {
+  font-family: monospace;
+  font-size: 1.05em;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: alpha(@window_fg_color, 0.05);
+}
+
+.markdown-editor {
+  font-family: monospace;
+  font-size: 0.95em;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.markdown-preview {
+  padding: 4px 2px;
+}
+
+.code-block {
+  border-radius: 8px;
+  border: 1px solid alpha(@borders, 0.85);
+  background-color: alpha(@window_fg_color, 0.055);
+}
+
+.code-block-header {
+  padding: 4px 8px 4px 12px;
+  border-bottom: 1px solid alpha(@borders, 0.55);
+  background-color: alpha(@window_fg_color, 0.035);
+}
+
+.code-block-lang {
+  font-size: 0.78em;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.code-block-copy {
+  min-height: 24px;
+  min-width: 24px;
+  padding: 2px 6px;
+}
+
+.code-block-body {
+  font-family: monospace;
+  font-size: 0.92em;
+  padding: 10px 12px;
+}
+
+.markdown-task-row checkbutton {
+  margin-top: 1px;
+}
+
+.filter-bar {
+  padding: 8px 12px 10px 12px;
+  background-color: @headerbar_bg_color;
+  border-bottom: 1px solid alpha(@headerbar_shade_color, 1);
+}
+
+button.filter-chip {
+  border-radius: 999px;
+  padding: 4px 12px;
+  min-height: 0;
+  background-color: alpha(@window_fg_color, 0.07);
+}
+
+button.filter-chip:hover {
+  background-color: alpha(@window_fg_color, 0.11);
+}
+
+button.filter-chip:checked {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+.chip-count {
+  font-size: 0.85em;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+button.filter-active {
+  color: @accent_color;
+}
+
+.statusbar {
+  min-height: 38px;
+  padding: 4px 14px 6px 14px;
+  border-top: 1px solid alpha(@borders, 0.5);
+}
+
+.statusbar label {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.statusbar button {
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+.statusbar .success image,
+.statusbar .success label {
+  color: @success_color;
+}
+
+.statusbar .warning image,
+.statusbar .warning label {
+  color: @warning_color;
+}
+
+.badge-added {
+  background-color: alpha(@success_color, 0.16);
+  color: @success_color;
+}
+
+.badge-updated {
+  background-color: alpha(@accent_bg_color, 0.16);
+  color: @accent_color;
+}
+
+.badge-dedupe {
+  background-color: alpha(@warning_color, 0.18);
+  color: @warning_color;
+}
+
+.badge-deleted {
+  background-color: alpha(@error_color, 0.16);
+  color: @error_color;
+}

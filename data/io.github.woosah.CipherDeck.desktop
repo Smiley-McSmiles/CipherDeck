@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=CipherDeck
+Comment=Encrypted password & markdown note vault with field-level CRDT sync
+Exec=cipherdeck
+Icon=io.github.woosah.CipherDeck
+Terminal=false
+Categories=Utility;Security;GTK;
+Keywords=password;vault;encryption;keepass;kdbx;notes;markdown;
+StartupNotify=true
+StartupWMClass=io.github.woosah.CipherDeck

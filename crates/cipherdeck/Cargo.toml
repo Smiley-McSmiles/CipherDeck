@@ -1,0 +1,17 @@
+[package]
+name = "cipherdeck"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+adw = { package = "libadwaita", version = "0.7", features = ["v1_6"] }
+anyhow = "1.0"
+chrono = "0.4"
+clap = { version = "4.5", features = ["derive"] }
+gtk = { package = "gtk4", version = "0.9", features = ["v4_14"] }
+pulldown-cmark = "0.12"
+rpassword = "7.3"
+uuid = { version = "1.10", features = ["v4"] }
+vault-core = { path = "../vault-core" }
+zeroize = "1.8"

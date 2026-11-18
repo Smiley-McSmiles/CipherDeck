@@ -1,0 +1,5 @@
+/target/
+/dist/
+*.cdeck
+*.wsafe
+*.kdbx

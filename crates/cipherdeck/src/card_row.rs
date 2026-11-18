@@ -449,9 +449,15 @@ fn render_markdown_into_box(
             Event::Code(code) => {
                 let idx = inline_codes.len();
                 inline_codes.push(code.to_string());
-                out.push_str(&format!("<a href=\"copycode:{idx}\"><tt>"));
-                out.push_str(&glib::markup_escape_text(&code));
-                out.push_str("</tt></a>");
+                let (fg, bg) = if adw::StyleManager::default().is_dark() {
+                    ("#f2f2f2", "#3b3b40")
+                } else {
+                    ("#1f1f23", "#e4e4e7")
+                };
+                let escaped = glib::markup_escape_text(&code);
+                out.push_str(&format!(
+                    "<a href=\"copycode:{idx}\"><span font_family='monospace' size='92%' underline='none' foreground='{fg}' background='{bg}'>\u{2009}{escaped}\u{2009}</span></a>"
+                ));
             }
             Event::SoftBreak => {
                 if in_code_block {

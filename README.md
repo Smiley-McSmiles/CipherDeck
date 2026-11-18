@@ -17,6 +17,17 @@
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/01-vault-list.png" alt="CipherDeck Vault List" width="820" />
+</p>
+<p align="center">
+  <img src="screenshots/02-login-card-editor.png" alt="CipherDeck Card Editor" width="820" />
+</p>
+
+---
+
 ## Features
 
 - **Cascade AEAD Encryption (`.cdeck`)** — Keys derived via **Argon2id** + optional **BLAKE3 keyfile** + **HKDF-SHA512**, then encrypted with **AES-256-GCM** wrapped inside **XChaCha20-Poly1305**.
